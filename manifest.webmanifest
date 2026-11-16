@@ -1,9 +1,22 @@
 {
-  "name": "Goals HQ \u2013 Personal Progress Tracker",
+  "name": "Goals HQ",
   "short_name": "Goals HQ",
+  "description": "Track your habits, goals and progress.",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#0b1220",
-  "theme_color": "#101827",
-  "description": "Daily habits, weekly accountability and long-term goals."
+  "background_color": "#111827",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
