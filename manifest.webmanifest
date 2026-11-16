@@ -1,0 +1,9 @@
+{
+  "name": "Goals HQ \u2013 Personal Progress Tracker",
+  "short_name": "Goals HQ",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b1220",
+  "theme_color": "#101827",
+  "description": "Daily habits, weekly accountability and long-term goals."
+}
