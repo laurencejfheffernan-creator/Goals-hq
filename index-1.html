@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<meta name="description" content="Your personal daily habits and goals tracker.">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Goals HQ</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#131e30;--panel2:#1b2940;--line:#2a3a53;--text:#f3f6fb;--muted:#9aabc2;--green:#39c58a;--blue:#75a7ff;--gold:#f2c66d}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#101a2b 0,#0b1220 360px);color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:760px;margin:auto;padding:22px 16px 90px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.brand{font-size:13px;color:var(--muted);letter-spacing:.13em;text-transform:uppercase;font-weight:700}.date{color:var(--muted);font-size:13px}
+h1{font-size:30px;line-height:1.1;margin:5px 0 4px;letter-spacing:-.04em}h2{font-size:18px;margin:0 0 12px}h3{font-size:15px;margin:0}
+p{margin:0;color:var(--muted)}.hero{background:linear-gradient(135deg,#1d3553,#142438);border:1px solid #314966;border-radius:22px;padding:19px;margin-bottom:17px}
+.hero-row{display:flex;justify-content:space-between;align-items:center;gap:12px}.score{font-size:35px;font-weight:800;letter-spacing:-.04em}.sub{font-size:13px;color:#c1d0e2}
+.bar{height:9px;background:#263850;border-radius:20px;overflow:hidden;margin-top:13px}.fill{height:100%;background:var(--green);width:0;transition:width .2s}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:17px 0}.tab{border:1px solid var(--line);background:#111c2d;color:var(--muted);padding:10px 4px;border-radius:12px;font-weight:650;font-size:12px}.tab.active{background:#263b57;color:white;border-color:#456487}
+.panel{background:rgba(19,30,48,.96);border:1px solid var(--line);border-radius:18px;padding:16px;margin:13px 0}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px}
+.item{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid rgba(42,58,83,.7)}.item:first-of-type{border-top:0}.emoji{font-size:21px;width:29px;text-align:center}.item-main{flex:1;min-width:0}.item-main strong{display:block}.item-main small{color:var(--muted)}
+input[type=checkbox]{width:22px;height:22px;accent-color:var(--green);flex-shrink:0}
+.pill{font-size:12px;color:#c8d7e9;background:#26364c;border-radius:30px;padding:5px 9px;white-space:nowrap}
+.goal{padding:13px 0;border-top:1px solid var(--line)}.goal:first-of-type{border-top:0}.goal-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.goal small{color:var(--muted)}
+button,.btn{cursor:pointer;border:1px solid var(--line);background:#22344d;color:white;border-radius:11px;padding:9px 12px;font:inherit;font-weight:650}.btn-primary{background:#197a5b;border-color:#269b73}.btn-quiet{background:transparent;color:var(--muted)}
+input[type=text],input[type=number],textarea,select{width:100%;background:#0e1828;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:11px;font:inherit}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#0e1929;border:1px solid var(--line);border-radius:13px;padding:13px}.stat b{font-size:23px;display:block}.stat span{font-size:12px;color:var(--muted)}
+.dayrow{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:12px}.day{background:#0e1929;border:1px solid var(--line);border-radius:9px;padding:7px 2px;text-align:center;font-size:11px;color:var(--muted)}.day b{display:block;color:white;font-size:13px}.day.done{background:#174b3c;border-color:#287b60;color:#d9fff0}
+textarea{min-height:90px;resize:vertical}.hidden{display:none!important}.foot{font-size:11px;color:var(--muted);text-align:center;margin:25px 0}
+@media(min-width:620px){.wrap{padding-top:30px}.tabs{max-width:560px}.hero{padding:23px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><div><div class="brand">Personal performance dashboard</div><h1>Goals HQ</h1><div class="date" id="todayDate"></div></div><button class="btn-quiet" id="installBtn" hidden>Install app</button></header>
+  <section class="hero">
+    <div class="hero-row"><div><div class="sub">Today's daily habits</div><div class="score"><span id="dailyDone">0</span><span style="font-size:18px;color:#b7c7dc"> / 8</span></div><div class="sub">Small wins. Consistently.</div></div><div style="font-size:42px">🎯</div></div>
+    <div class="bar"><div class="fill" id="dailyBar"></div></div>
+  </section>
+  <nav class="tabs">
+    <button class="tab active" data-tab="today">Today</button><button class="tab" data-tab="goals">My goals</button><button class="tab" data-tab="progress">Progress</button><button class="tab" data-tab="review">Review</button>
+  </nav>
+
+  <main id="today" class="view">
+    <section class="panel"><div class="section-head"><h2>Daily discipline</h2><span class="pill" id="dailyPill">0 of 8</span></div><div id="dailyList"></div></section>
+    <section class="panel"><div class="section-head"><h2>Today's bigger actions</h2><span class="pill">Flexible</span></div><p style="font-size:13px;margin-bottom:10px">Tick a session when you complete it. Weekly targets are tracked separately.</p><div id="todaySessions"></div></section>
+  </main>
+
+  <main id="goals" class="view hidden">
+    <section class="panel"><h2>Existing goals</h2><p style="font-size:13px;margin-bottom:13px">Your starting goals, based on what you've already told me. Edit targets as your plans evolve.</p><div id="goalList"></div></section>
+    <section class="panel"><h2>Strength milestones</h2><p style="font-size:13px;margin-bottom:12px">Current personal bests and targets (kg).</p><div class="grid" id="strengthGrid"></div></section>
+  </main>
+
+  <main id="progress" class="view hidden">
+    <section class="panel"><div class="section-head"><h2>This week's consistency</h2><span class="pill" id="weekLabel"></span></div><div class="grid"><div class="stat"><b id="weeklyDone">0</b><span>Sessions logged</span></div><div class="stat"><b id="weeklyTarget">0</b><span>Weekly target</span></div><div class="stat"><b id="weeklyPct">0%</b><span>Target completion</span></div><div class="stat"><b id="streak">0</b><span>Daily habit streak</span></div></div><div id="weeklyBars"></div></section>
+    <section class="panel"><h2>Daily habit history</h2><p style="font-size:13px;margin-bottom:10px">Your last 7 days of completed daily habits.</p><div id="history"></div></section>
+  </main>
+
+  <main id="review" class="view hidden">
+    <section class="panel"><h2>Weekly reflection</h2><label class="sub" for="wins">What went well?</label><textarea id="wins" placeholder="Wins, progress and things you're proud of..."></textarea><div style="height:10px"></div><label class="sub" for="improve">What needs attention?</label><textarea id="improve" placeholder="Where did you slip, and why?"></textarea><div style="height:10px"></div><label class="sub" for="next">What are next week's priorities?</label><textarea id="next" placeholder="Three priorities for the week ahead..."></textarea><div style="height:12px"></div><button class="btn-primary" id="saveReview">Save review</button><span id="savedMsg" class="sub" style="margin-left:8px"></span></section>
+    <section class="panel"><h2>Data & backup</h2><p style="font-size:13px;margin-bottom:12px">Your tracker data stays in this browser on this device. Export a backup regularly.</p><button id="exportBtn">Export backup</button> <button id="importBtn">Import backup</button><input id="importFile" type="file" accept="application/json" hidden></section>
+  </main>
+  <div class="foot">Goals HQ · Your data is stored on this device. Export a backup to keep it safe.</div>
+</div>
+<script>
+const habits=[
+ {id:'water',name:'Drink 2 litres of water',emoji:'💧',detail:'Aim for 2,000 ml across the day'},
+ {id:'creatine',name:'Take creatine',emoji:'🥄',detail:'Your usual daily creatine routine'},
+ {id:'protein',name:'Hit protein target',emoji:'🥤',detail:'Track your daily protein intake'},
+ {id:'meditate',name:'Meditate',emoji:'🧘',detail:'Even 5–10 minutes counts'},
+ {id:'read',name:'Read before bed',emoji:'📖',detail:'A little reading before sleep'},
+ {id:'german',name:'German – 10 minutes',emoji:'🇩🇪',detail:'A short daily language session'},
+ {id:'crossfit',name:'CrossFit',emoji:'🏋️',detail:'Tick off when you complete a CrossFit session'},
+ {id:'guitar',name:'Guitar – 10 minutes',emoji:'🎸',detail:'A little daily practice'}
+];
+const goals=[
+ {id:'crossfit',name:'CrossFit',emoji:'🏋️',target:4,unit:'sessions/week',detail:'Build strength and fitness'},
+ {id:'running',name:'Running / marathon',emoji:'🏃',target:2,unit:'sessions/week',detail:'Build consistent running volume'},
+ {id:'cycling',name:'Cycling / Ironman',emoji:'🚴',target:2,unit:'sessions/week',detail:'Develop bike endurance'},
+ {id:'ou',name:'OU – S227',emoji:'📚',target:5,unit:'study sessions/week',detail:'Progress towards your degree'},
+ {id:'german',name:'German',emoji:'🇩🇪',target:4,unit:'sessions/week',detail:'Short, regular language practice'},
+ {id:'guitar',name:'Guitar',emoji:'🎸',target:2,unit:'sessions/week',detail:'Keep developing your playing'},
+ {id:'golf',name:'Golf',emoji:'⛳',target:1,unit:'sessions/week',detail:'Keep your game moving forward'},
+ {id:'career',name:'Career development',emoji:'💼',target:1,unit:'focused action/week',detail:'Progress towards FC / Head of Finance / FD'}
+];
+const strength=[['Deadlift',160,180],['Back squat',140,160],['Bench press',105,120]];
+const KEY='goalsHQ_v1';
+let data=load();
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{days:{},reviews:{},targets:{}}}catch(e){return {days:{},reviews:{},targets:{}}}}
+function save(){localStorage.setItem(KEY,JSON.stringify(data))}
+function key(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function dayData(k=key()){if(!data.days[k])data.days[k]={habits:{},sessions:{}};return data.days[k]}
+function startOfWeek(d=new Date()){let x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x}
+function weekKeys(){let s=startOfWeek();return Array.from({length:7},(_,i)=>{let d=new Date(s);d.setDate(s.getDate()+i);return key(d)})}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function render(){
+ const now=new Date();document.getElementById('todayDate').textContent=now.toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ const d=dayData(),n=habits.filter(h=>d.habits[h.id]).length;
+ document.getElementById('dailyDone').textContent=n;document.getElementById('dailyPill').textContent=`${n} of ${habits.length}`;document.getElementById('dailyBar').style.width=(n/habits.length*100)+'%';
+ document.getElementById('dailyList').innerHTML=habits.map(h=>`<div class="item"><div class="emoji">${h.emoji}</div><div class="item-main"><strong>${h.name}</strong><small>${h.detail}</small></div><input type="checkbox" data-habit="${h.id}" ${d.habits[h.id]?'checked':''} aria-label="${h.name}"></div>`).join('');
+ document.getElementById('todaySessions').innerHTML=goals.map(g=>`<div class="item"><div class="emoji">${g.emoji}</div><div class="item-main"><strong>${g.name}</strong><small>${g.detail}</small></div><input type="checkbox" data-session="${g.id}" ${d.sessions[g.id]?'checked':''} aria-label="${g.name}"></div>`).join('');
+ document.getElementById('goalList').innerHTML=goals.map(g=>{let t=data.targets[g.id]??g.target;return `<div class="goal"><div class="goal-top"><div><strong>${g.emoji} ${g.name}</strong><br><small>${g.detail}</small></div><span class="pill">${t} ${g.unit}</span></div><div style="display:flex;gap:8px;align-items:center;margin-top:9px"><label class="sub" for="target-${g.id}">Weekly target</label><input style="max-width:90px" type="number" min="0" max="30" id="target-${g.id}" value="${t}" data-target="${g.id}"></div></div>`}).join('');
+ document.getElementById('strengthGrid').innerHTML=strength.map(s=>`<div class="stat"><span>${s[0]}</span><b>${s[1]} kg</b><span>Target: ${s[2]} kg</span></div>`).join('');
+ renderProgress();
+ const rev=data.reviews[key(startOfWeek())]||{};['wins','improve','next'].forEach(id=>document.getElementById(id).value=rev[id]||'');
+}
+function renderProgress(){
+ let ks=weekKeys(),total=0,target=0,doneBy={};goals.forEach(g=>{let c=ks.filter(k=>data.days[k]?.sessions?.[g.id]).length;doneBy[g.id]=c;total+=c;target+=(data.targets[g.id]??g.target)});
+ document.getElementById('weekLabel').textContent=ks[0].slice(5)+' – '+ks[6].slice(5);
+ document.getElementById('weeklyDone').textContent=total;document.getElementById('weeklyTarget').textContent=target;document.getElementById('weeklyPct').textContent=Math.round(total/Math.max(1,target)*100)+'%';
+ let streak=0;for(let i=0;i<365;i++){let d=new Date();d.setDate(d.getDate()-i);let x=data.days[key(d)];if(x&&habits.filter(h=>h.id!=='crossfit').every(h=>x.habits?.[h.id]))streak++;else if(i>0)break;}document.getElementById('streak').textContent=streak;
+ document.getElementById('weeklyBars').innerHTML=goals.map(g=>`<div style="margin-top:13px"><div class="goal-top"><small>${g.emoji} ${g.name}</small><small>${doneBy[g.id]}/${data.targets[g.id]??g.target}</small></div><div class="bar" style="margin-top:6px"><div class="fill" style="width:${Math.min(100,doneBy[g.id]/Math.max(1,data.targets[g.id]??g.target)*100)}%"></div></div></div>`).join('');
+ let last=Array.from({length:7},(_,i)=>{let d=new Date();d.setDate(d.getDate()-(6-i));return key(d)});document.getElementById('history').innerHTML=last.map(k=>{let x=data.days[k]?.habits||{},c=habits.filter(h=>x[h.id]).length;return `<div class="day ${c===habits.length?'done':''}">${new Date(k+'T12:00:00').toLocaleDateString(undefined,{weekday:'short'})}<b>${c}/${habits.length}</b></div>`}).join('');
+}
+document.addEventListener('change',e=>{
+ if(e.target.dataset.habit){dayData().habits[e.target.dataset.habit]=e.target.checked;save();render()}
+ if(e.target.dataset.session){dayData().sessions[e.target.dataset.session]=e.target.checked;save();render()}
+ if(e.target.dataset.target){data.targets[e.target.dataset.target]=Math.max(0,Math.min(30,Number(e.target.value)||0));save();render()}
+});
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.view').forEach(x=>x.classList.toggle('hidden',x.id!==b.dataset.tab));if(b.dataset.tab==='progress')renderProgress()}));
+document.getElementById('saveReview').onclick=()=>{data.reviews[key(startOfWeek())]={wins:wins.value,improve:improve.value,next:next.value};save();savedMsg.textContent='Saved ✓';setTimeout(()=>savedMsg.textContent='',1800)};
+document.getElementById('exportBtn').onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='goals-hq-backup.json';a.click();URL.revokeObjectURL(a.href)};
+document.getElementById('importBtn').onclick=()=>importFile.click();
+document.getElementById('importFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text());if(!x.days||!x.reviews)throw Error();data=x;save();render();alert('Backup restored.')}catch(err){alert('That backup file could not be read.')}};
+let deferred;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;installBtn.hidden=false});
+installBtn.onclick=async()=>{if(deferred){deferred.prompt();await deferred.userChoice;deferred=null;installBtn.hidden=true}};
+if('serviceWorker'in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+render();
+</script>
+</body></html>
